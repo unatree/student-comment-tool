@@ -4,22 +4,35 @@ const keywords = {
     A: [
         '積極發問', '專注課堂', '具批判性思考', '樂於閱讀', '數理邏輯強',
         '語文表達佳', '作業準時且認真', '邏輯組織力佳', '追求卓越', '應用實踐力強',
-        '虛心受教', '獨立完成度高'
+        '虛心受教', '獨立完成度高',
+        // 新增
+        '學習態度積極', '善於歸納總結', '善用資源', '善於時間分配', '理解力佳',
+        '分析能力強', '書寫整潔', '課堂參與熱烈', '主動檢討修正', '實驗操作穩定'
     ],
     // B: 核心素養 (行為)
     B: [
         '團隊合作', '具同理心', '負責盡職', '時間管理佳', '勇於承擔',
-        '解決問題能力', '樂於助人', '熱心參與班級事務', '展現良好社交能力'
+        '解決問題能力', '樂於助人', '熱心參與班級事務', '展現良好社交能力',
+        // 新增
+        '溝通能力佳', '尊重他人', '守規矩', '積極協調', '領導潛能',
+        '願意分享', '遵守承諾', '有禮貌', '支持同儕', '會聆聽'
     ],
     // C: 成長特質 (個性)
     C: [
         '自律性高', '充滿熱忱', '樂觀開朗', '細心觀察', '具服務熱忱',
-        '進步顯著', '具備好奇心', '富有創造力', '情緒管理得宜'
+        '進步顯著', '具備好奇心', '富有創造力', '情緒管理得宜',
+        // 新增
+        '抗壓性佳', '謙虛有禮', '主動學習', '思維靈活', '責任感強',
+        '耐心細緻', '具批判精神', '穩重成熟', '自我反省能力強', '有探索精神'
     ],
     // D: 鼓勵建議 (結尾)
     D: [
         '保持熱情', '挑戰自我', '多與同儕交流', '持續精進表達', '善用時間規劃',
-        '再提升細心度', '保持穩定的學習步伐', '勇於嘗試新的學習方式'
+        '再提升細心度', '保持穩定的學習步伐', '勇於嘗試新的學習方式',
+        // 新增
+        '多參加課外實作', '養成複習習慣', '嘗試跨領域學習', '練習發表技巧',
+        '建立學習筆記系統', '培養閱讀多元素材的習慣', '維持良好作息',
+        '多向老師請教', '設定具體短期目標', '繼續保持好奇心'
     ]
 };
 
@@ -49,12 +62,17 @@ const sentenceTemplates = {
 
 let selectedKeywords = { A: [], B: [], C: [], D: [] };
 
-// 3.1. 渲染關鍵字按鈕
+// 3.1. 渲染關鍵字按鈕（含每類別的自訂輸入區）
 function renderKeywords() {
     for (const category in keywords) {
         const container = document.getElementById(`category-${category}`);
         if (container) {
             container.innerHTML = ''; // 清空舊內容
+
+            // 列表容器（放按鈕）
+            const listDiv = document.createElement('div');
+            listDiv.className = 'keyword-list';
+
             keywords[category].forEach(keyword => {
                 const button = document.createElement('button');
                 button.className = 'keyword-btn';
@@ -62,10 +80,71 @@ function renderKeywords() {
                 button.setAttribute('data-category', category);
                 button.setAttribute('data-keyword', keyword);
                 button.addEventListener('click', toggleKeywordSelection);
-                container.appendChild(button);
+                listDiv.appendChild(button);
             });
+
+            container.appendChild(listDiv);
+
+            // 自訂輸入區塊（input + 新增按鈕）
+            const customDiv = document.createElement('div');
+            customDiv.className = 'custom-input';
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = `新增自訂關鍵字（類別 ${category}）`;
+            input.className = 'custom-keyword-input';
+            input.setAttribute('data-category', category);
+
+            const addBtn = document.createElement('button');
+            addBtn.className = 'add-custom-btn';
+            addBtn.textContent = '新增';
+
+            // 按下新增時的行為
+            addBtn.addEventListener('click', () => addCustomKeyword(category, input, listDiv));
+            // Enter 鍵也觸發新增
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    addCustomKeyword(category, input, listDiv);
+                }
+            });
+
+            customDiv.appendChild(input);
+            customDiv.appendChild(addBtn);
+            container.appendChild(customDiv);
         }
     }
+}
+
+// 新增自訂關鍵字的處理
+function addCustomKeyword(category, inputEl, listDiv) {
+    const val = inputEl.value.trim();
+    if (!val) {
+        alert('請輸入關鍵字後再按新增。');
+        return;
+    }
+
+    // 避免重複
+    if (keywords[category].includes(val)) {
+        alert('此關鍵字已存在於此類別中。');
+        inputEl.value = '';
+        return;
+    }
+
+    // 新增到資料庫
+    keywords[category].push(val);
+
+    // 建立按鈕（和其他按鈕一致）
+    const button = document.createElement('button');
+    button.className = 'keyword-btn';
+    button.textContent = val;
+    button.setAttribute('data-category', category);
+    button.setAttribute('data-keyword', val);
+    button.addEventListener('click', toggleKeywordSelection);
+
+    listDiv.appendChild(button);
+
+    // 清空輸入框（不自動選取，讓使用者決定是否選中）
+    inputEl.value = '';
 }
 
 // 3.2. 處理點擊事件
@@ -78,8 +157,10 @@ function toggleKeywordSelection(event) {
     btn.classList.toggle('selected');
 
     if (btn.classList.contains('selected')) {
-        // 如果被選中，加入選取列表
-        selectedKeywords[category].push(keyword);
+        // 如果被選中，加入選取列表（避免重複）
+        if (!selectedKeywords[category].includes(keyword)) {
+            selectedKeywords[category].push(keyword);
+        }
     } else {
         // 如果取消選中，從列表移除
         selectedKeywords[category] = selectedKeywords[category].filter(k => k !== keyword);
@@ -150,12 +231,14 @@ function copyCommentary() {
 
 // 4. 網頁加載完畢後執行
 document.addEventListener('DOMContentLoaded', () => {
-    // 渲染所有關鍵字按鈕
+    // 渲染所有關鍵字按鈕（含自訂輸入）
     renderKeywords();
 
     // 綁定生成按鈕
-    document.getElementById('generate-btn').addEventListener('click', generateCommentary);
+    const genBtn = document.getElementById('generate-btn');
+    if (genBtn) genBtn.addEventListener('click', generateCommentary);
 
     // 綁定複製按鈕
-    document.getElementById('copy-btn').addEventListener('click', copyCommentary);
+    const copyBtn = document.getElementById('copy-btn');
+    if (copyBtn) copyBtn.addEventListener('click', copyCommentary);
 });
