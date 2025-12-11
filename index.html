@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小學生評語生成器</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🏆 小學生成長評語生成器</h1>
+        <p class="description">請點選下方關鍵字，組合出具體、正向的學生評語。</p>
+
+        <div id="keywords-selection">
+            <section class="category-section" data-category="A">
+                <h2>1. 學習表現 (優點)</h2>
+                <div class="keywords-container" id="category-A">
+                    </div>
+            </section>
+
+            <section class="category-section" data-category="B">
+                <h2>2. 核心素養 (行為)</h2>
+                <div class="keywords-container" id="category-B">
+                    </div>
+            </section>
+
+            <section class="category-section" data-category="C">
+                <h2>3. 成長特質 (個性)</h2>
+                <div class="keywords-container" id="category-C">
+                    </div>
+            </section>
+
+            <section class="category-section" data-category="D">
+                <h2>4. 鼓勵建議 (結尾)</h2>
+                <div class="keywords-container" id="category-D">
+                    </div>
+            </section>
+        </div>
+
+        <button id="generate-btn">生成評語</button>
+
+        <div id="output-area">
+            <h2>生成的評語</h2>
+            <div id="result-text" class="result-box">點擊上方關鍵字後，按下「生成評語」按鈕。</div>
+            <button id="copy-btn">一鍵複製</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
